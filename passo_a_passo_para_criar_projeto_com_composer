@@ -1,0 +1,51 @@
+- Primeiro, deve-se instalar o composer em uma pasta qualquer. Para instalar no windows basta acessar a URL
+  https://getcomposer.org/Composer-Setup.exe, fazer o download do exe e instalar;
+
+- A instalação criará uma pasta "C:\ProgramData\ComposerSetup\bin" e dentro dela o composer.phar e o .bat, que é o binário PHP
+  para a execução do composer em qualquer pasta de projetos do seu servidor. Para isso é automaticamente adicionado 
+  o path citado na variável "PATH" do Windows;
+
+- Feito isso, para criar um projeto (pacote) com o gerenciamento de dependências do composer há DUAS maneiras:
+  1º) Copiar para dentro da pasta do projeto desejado o arquivo "C:\ProgramData\ComposerSetup\bin\composer.phar"
+      e rodar o comando "php composer.phar init". Este comando faz umas perguntas para montar o arquivo "composer.json"
+      que será o arquivo que conterá todas as informações para o composer saber o que fazer, como por exemplo quais dependências
+      devem ser baixadas, versão do PHP, etc.
+  2º) A mais fácil é dentro da pasta do projeto desejado criar o arquivo manualmente "composer.json" conforme abaixo:
+		{
+			"name": "carlos/novo-teste",
+			"description": "Mais um teste, agora gerando o composer.json a partir do comando init do composer.phar",
+			"type": "project",								---> pode ser "library", "package", "project", etc
+			"require": {									---> Aqui são configuradas as dependências do projeto, como pacotes para baixar e versão mínima do PHP
+				"php": ">=5.4",								---> Significa que se quem baixar o projeto tiver versão menor, será abortada a instalação
+				"silex/silex": "1.3.*@stable"		        ---> Diz que é para baixar de "packagist.org" o projeto feito no composer com esse nome	
+			},
+			"license": "MIT",								---> Tipo de licença Open Source
+			"authors": [									---> Dados do autor do projeto
+				{
+					"name": "Carlos F. Domingues",
+					"email": "dominguess@gmail.com"
+				}
+			],
+			"minimum-stability": "dev",						---> Apenas para indicar que é projeto de desenv.
+			"autoload": {									---> Define o autoload para o namespace App\
+				"psr-4": {"Classes\\": "src/Classes"}		---> No caso todas as classes do seu pacote estarão em "src/Classes",
+																 bastando depois de baixar este pacote "carlos/novo-teste", dar um require_once
+																 para "vendor/autoload.php" e depois new Classes\CLASSE_DESEJADA;
+			},
+			"config": {"bin-dir": "bin/"}					---> Indica a pasta onde executáveis ou bash's estarão
+		}
+	 Depois de criar o arquivo, basta rodar o comando "composer install", que o binário do composer irá ler o json com as informações
+	 e baixar as dependências necessárias, no caso do exemplo acima o package "carlos/teste-composer" na sua versão "dev-master".
+	 Também irá montar toda a parte do autoload para carregamento de classes automático via spl_register.
+	 
+- Estando o projeto configurado e com as dependências baixadas, você já pode subir o mesmo para um novo repositório no GitHub,
+  e relacionar o mesmo no site "packagist.org". Para isso crie uma conta nesse site, depois de logado clique em "Submit",
+  digite o endereço do seu repositório por exemplo "https://github.com/cdominguess/teste-composer" e clique em check.
+  O packagist localizará o projeto no Git e liberará o "Submit".
+
+- Feito isso você deve ir no GitHub e fazer a integração GitHub -> Packagist, para que quando fizer commit no GitHub o sistema
+  atualize automaticamente no Packagist. Para isso no GitHub, clique em "Settings" do seu repositório, depois em "Integrations & Services".
+  Em "Services" terá um combo à direita chamado "Add Service", clique nele e localize "Packagist" e clique em "OK". Feito isso 
+  para o Packagist clique em "Edit", volte ao site do packagist e no seu profile, clique em "Show API Token" e copie seu tokem 
+  que autenticará a integração no GitHub. Volte no git e após ter editado o Packagist, cole o token na respectiva caixa de texto
+  e depois clique em "Add Service". Pronto, agora todos os commits serão replicados para o Packagist.
